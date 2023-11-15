@@ -6,8 +6,8 @@ namespace Test\Happyr\Validator\Constraint;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Happyr\Validator\Constraint\EntityExist;
-use Happyr\Validator\Constraint\EntityExistValidator;
+use Happyr\Validator\Constraint\EntityNotExist;
+use Happyr\Validator\Constraint\EntityNotExistValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\NotNull;
@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-class EntityExistValidatorTest extends TestCase
+class EntityNotExistValidatorTest extends TestCase
 {
     /** @var MockObject */
     private $entityManager;
@@ -24,7 +24,7 @@ class EntityExistValidatorTest extends TestCase
     /** @var MockObject */
     private $context;
 
-    /** @var EntityExistValidator */
+    /** @var EntityNotExistValidator */
     private $validator;
 
     protected function setUp(): void
@@ -32,7 +32,7 @@ class EntityExistValidatorTest extends TestCase
         $this->entityManager = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
         $this->context = $this->getMockBuilder(ExecutionContextInterface::class)->getMock();
 
-        $this->validator = new EntityExistValidator($this->entityManager);
+        $this->validator = new EntityNotExistValidator($this->entityManager);
         $this->validator->initialize($this->context);
     }
 
@@ -44,7 +44,15 @@ class EntityExistValidatorTest extends TestCase
 
     public function testValidateWithNoEntity(): void
     {
-        $constraint = new EntityExist();
+        $constraint = new EntityNotExist('');
+
+        $this->expectException(\LogicException::class);
+        $this->validator->validate('foobar', $constraint);
+    }
+
+    public function testValidateWithNoProperty(): void
+    {
+        $constraint = new EntityNotExist('App\Entity\User', '');
 
         $this->expectException(\LogicException::class);
         $this->validator->validate('foobar', $constraint);
@@ -53,8 +61,7 @@ class EntityExistValidatorTest extends TestCase
     public function testValidateValidEntity(): void
     {
         $this->context->expects($this->never())->method('buildViolation');
-        $constraint = new EntityExist();
-        $constraint->entity = 'App\Entity\User';
+        $constraint = new EntityNotExist('App\Entity\User');
 
         $repository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
@@ -64,7 +71,7 @@ class EntityExistValidatorTest extends TestCase
             ->expects($this->once())
             ->method('findOneBy')
             ->with(['id' => 'foobar'])
-            ->willReturn('my_user');
+            ->willReturn(null);
 
         $this->entityManager
             ->expects($this->once())
@@ -81,8 +88,7 @@ class EntityExistValidatorTest extends TestCase
     public function testValidateSkipsIfValueEmptyOrNull($value): void
     {
         $this->context->expects($this->never())->method('buildViolation');
-        $constraint = new EntityExist();
-        $constraint->entity = 'App\Entity\User';
+        $constraint = new EntityNotExist('App\Entity\User');
 
         $repository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
@@ -112,9 +118,7 @@ class EntityExistValidatorTest extends TestCase
     public function testValidateValidEntityWithCustomProperty(): void
     {
         $this->context->expects($this->never())->method('buildViolation');
-        $constraint = new EntityExist();
-        $constraint->entity = 'App\Entity\User';
-        $constraint->property = 'uuid';
+        $constraint = new EntityNotExist('App\Entity\User', 'uuid');
 
         $repository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
@@ -124,7 +128,7 @@ class EntityExistValidatorTest extends TestCase
             ->expects($this->once())
             ->method('findOneBy')
             ->with(['uuid' => 'foobar'])
-            ->willReturn('my_user');
+            ->willReturn(null);
 
         $this->entityManager
             ->expects($this->once())
@@ -141,8 +145,7 @@ class EntityExistValidatorTest extends TestCase
         $violationBuilder->method('setParameter')->will($this->returnSelf());
 
         $this->context->expects($this->once())->method('buildViolation')->willReturn($violationBuilder);
-        $constraint = new EntityExist();
-        $constraint->entity = 'App\Entity\User';
+        $constraint = new EntityNotExist('App\Entity\User');
 
         $repository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
@@ -151,7 +154,7 @@ class EntityExistValidatorTest extends TestCase
         $repository
             ->expects($this->once())
             ->method('findOneBy')
-            ->willReturn(null);
+            ->willReturn('my_user');
 
         $this->entityManager
             ->expects($this->once())
@@ -186,7 +189,7 @@ class EntityExistValidatorTest extends TestCase
             ->expects($this->once())
             ->method('findOneBy')
             ->with(['uuid' => 'foobar'])
-            ->willReturn('my_user');
+            ->willReturn(null);
 
         $this->entityManager
             ->expects($this->once())
@@ -200,6 +203,6 @@ class EntityExistValidatorTest extends TestCase
 
 class EntityDummy
 {
-    #[EntityExist(entity: 'App\Entity\User', property: 'uuid')]
+    #[EntityNotExist(entity: 'App\Entity\User', property: 'uuid')]
     private $user;
 }

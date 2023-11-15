@@ -10,11 +10,10 @@
 A small validator that verifies that an Entity actually exists. This is especially useful if you use Symfony Messenger
 component. Now you can safely validate the message and put it on a queue for processing later.
 
-
 ```php
 namespace App\Message\Command;
 
-use Happyr\Validator\Constraint\EntityExist;
+use Happyr\Validator\Constraint\EntityNotExist;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class EmailUser
@@ -43,7 +42,7 @@ In case you are using other constraints to validate the property before entity s
 ```php
 namespace App\Message\Command;
 
-use Happyr\Validator\Constraint\EntityExist;
+use Happyr\Validator\Constraint\EntityNotExist;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
