@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Test\Happyr\Validator\Constraint;
+namespace Test\Arad021\Validator\Constraint;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Happyr\Validator\Constraint\EntityNotExist;
-use Happyr\Validator\Constraint\EntityNotExistValidator;
+use Arad021\Validator\Constraint\EntityNotExist;
+use Arad021\Validator\Constraint\EntityNotExistValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\NotNull;

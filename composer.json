@@ -19,12 +19,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Happyr\\Validator\\Constraint\\": "src/"
+      "Arad021\\Validator\\Constraint\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\Happyr\\Validator\\Constraint\\": "tests/"
+      "Tests\\Arad021\\Validator\\Constraint\\": "tests/"
     }
   }
 }

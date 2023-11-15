@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Happyr\Validator\Constraint;
+namespace Arad021\Validator\Constraint;
 
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
