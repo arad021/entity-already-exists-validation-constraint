@@ -14,7 +14,7 @@ Then register the services with:
 ```yaml
 # config/packages/arad021_entity_already_exists_validator.yaml
 services:
-  Arad021\Validator\Constraint\EntityExistValidator:
+  Arad021\Validator\Constraint\EntityNotExistValidator:
     arguments: ['@doctrine.orm.entity_manager']
     tags: [ 'validator.constraint_validator' ]
 ```
